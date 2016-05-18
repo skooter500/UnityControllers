@@ -20,8 +20,6 @@ void setup() {
   bno.setExtCrystalUse(true); 
 }
 
-imu::Quaternion lastQuat;
-
 void loop() {
 
   imu::Quaternion quat = bno.getQuat();
