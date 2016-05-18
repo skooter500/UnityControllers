@@ -14,6 +14,34 @@ public class BNOController : MonoBehaviour {
 
     Quaternion sensorRotation;
 
+    [Range(0, 360)]
+    public float x;
+    public float y;
+    public float z;
+
+    public int system;
+    public int gyro;
+    public int accel;
+    public int magnet;
+
+    void OnDrawGizmos()
+    {
+
+        float dist = 10;
+        Gizmos.color = Color.green;
+        Vector3 to = transform.position + ((Quaternion.Euler(0, x, 0) * Vector3.forward) * dist);
+        Gizmos.DrawLine(transform.position, to);
+        
+        Gizmos.color = Color.red;
+        to = transform.position + ((Quaternion.Euler(0, y, 0) * Vector3.forward) * dist);
+        Gizmos.DrawLine(transform.position, to);
+        
+        Gizmos.color = Color.cyan;
+        to = transform.position + ((Quaternion.Euler(0, z, 0) * Vector3.forward) * dist);
+        Gizmos.DrawLine(transform.position, to);
+        
+    }
+
     // Use this for initialization
     void Start()
     {
@@ -44,6 +72,36 @@ public class BNOController : MonoBehaviour {
                 , float.Parse(decoded[3]));
             sensorRotation = q;
         }
+        if (message.StartsWith("S:"))
+        {
+            system = int.Parse(message.Substring(2));
+        }
+        if (message.StartsWith("A:"))
+        {
+            accel = int.Parse(message.Substring(2));
+        }
+        if (message.StartsWith("M:"))
+        {
+            magnet = int.Parse(message.Substring(2));
+        }
+        if (message.StartsWith("G:"))
+        {
+            gyro = int.Parse(message.Substring(2));
+        }
+        if (message.StartsWith("OX:"))
+        {
+            x = float.Parse(message.Substring(3));
+        }
+        if (message.StartsWith("OY:"))
+        {
+            y = float.Parse(message.Substring(3));
+        }
+        if (message.StartsWith("OZ:"))
+        {
+            z = float.Parse(message.Substring(3));
+        }
+
+
     }
 
     void ThreadWorker()

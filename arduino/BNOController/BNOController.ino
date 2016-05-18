@@ -41,6 +41,28 @@ void loop() {
     Serial.print(",");
     printDouble(quat.w(), 5);    
     Serial.println();
+
+    uint8_t system, gyro, accel, mag;
+    system = gyro = accel = mag = 0;
+    bno.getCalibration(&system, &gyro, &accel, &mag);
+    Serial.print("S:");
+    Serial.println(system, DEC);
+    Serial.print("G:");
+    Serial.println(gyro, DEC);
+    Serial.print("A:");
+    Serial.println(accel, DEC);
+    Serial.print("M:");
+    Serial.println(mag, DEC);
+
+    sensors_event_t event;
+    bno.getEvent(&event);
+
+    Serial.print(F("OX:"));
+    Serial.println((float)event.orientation.x);
+    Serial.print(F("OY:"));
+    Serial.println((float)event.orientation.y);
+    Serial.print(F("OZ:"));
+    Serial.println((float)event.orientation.z);    
   }
   delay(100);  //lastQuat = quat;
 }
