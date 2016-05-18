@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.IO.Ports;
 using System.Threading;
+using System;
 
 public class BNOController : MonoBehaviour {
 
@@ -14,6 +16,11 @@ public class BNOController : MonoBehaviour {
 
     Quaternion sensorRotation;
 
+    public Text azimuth;
+    public Text tilt;
+    public Text skew;
+    
+
     [Range(0, 360)]
     public float x;
     public float y;
@@ -24,23 +31,14 @@ public class BNOController : MonoBehaviour {
     public int accel;
     public int magnet;
 
-    void OnDrawGizmos()
+    public static float Map(float value, float r1, float r2, float m1, float m2)
     {
-
-        float dist = 10;
-        Gizmos.color = Color.green;
-        Vector3 to = transform.position + ((Quaternion.Euler(0, x, 0) * Vector3.forward) * dist);
-        Gizmos.DrawLine(transform.position, to);
-        
-        Gizmos.color = Color.red;
-        to = transform.position + ((Quaternion.Euler(0, y, 0) * Vector3.forward) * dist);
-        Gizmos.DrawLine(transform.position, to);
-        
-        Gizmos.color = Color.cyan;
-        to = transform.position + ((Quaternion.Euler(0, z, 0) * Vector3.forward) * dist);
-        Gizmos.DrawLine(transform.position, to);
-        
+        float dist = value - r1;
+        float range1 = r2 - r1;
+        float range2 = m2 - m1;
+        return m1 + ((dist / range1) * range2);
     }
+
 
     // Use this for initialization
     void Start()
@@ -58,7 +56,13 @@ public class BNOController : MonoBehaviour {
     void Update()
     {
         transform.rotation = sensorRotation;
+
+        azimuth.text = "Azimuth: " + Math.Round(x, 2);
+        tilt.text = "Tilt: "
+            + Math.Round(Map(z, -90.0f, 0.0f, 0.0f, 90.0f), 2);
+        skew.text = "Skew: " + Math.Round(y, 2);
     }
+
 
     void ProcessMessage(string message)
     {

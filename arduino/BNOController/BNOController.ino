@@ -8,7 +8,7 @@ Adafruit_BNO055 bno = Adafruit_BNO055();
 void setup() {
   Serial.begin(9600);  
   /* Initialise the sensor */
-  if(!bno.begin())
+  if(!bno.begin(Adafruit_BNO055::OPERATION_MODE_COMPASS))
   {
     /* There was a problem detecting the BNO055 ... check your connections */
     Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
