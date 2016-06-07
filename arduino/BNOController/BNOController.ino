@@ -4,6 +4,20 @@
 #include <utility/imumaths.h>
   
 Adafruit_BNO055 bno = Adafruit_BNO055();
+
+#define GPS 0x29 //GPS Shield I2C address
+
+int PDOP = 0;
+int HDOP = 0;
+int VDOP = 0;
+uint8_t statusReg  = 0;
+long latitude   = 0;
+long longitude  = 0;
+long utcTime    = 0;
+long date       = 0;
+long altitude   = 0;
+unsigned int course    = 0;
+unsigned long speedKPH  = 0;
  
 void setup() {
   Serial.begin(9600);  
@@ -61,6 +75,50 @@ void loop() {
     Serial.println((float)event.orientation.y);
     Serial.print(F("OZ:"));
     Serial.println((float)event.orientation.z);    
+
+     Wire.beginTransmission(GPS);
+    Wire.write((uint8_t)(0x00)); //set address pointer to zero
+    Wire.endTransmission();
+    delay(1); //1 millisecond delay is needed before requesting data
+    Wire.requestFrom(GPS,1); //all data (not including checksum failures) is a total of 31 bytes
+    statusReg = Wire.read();
+    //lets check bit zero of the status register to see if any new data is available
+    //if not we'll just return.  If bit zero is a 1 then new data is available
+    //if(!bitRead(statusReg,0)){
+    //  return;
+    //}
+    //let's check bit one of the status register to see if the latitude and
+    //longitude data computed is valid or not.  This bit is controlled by the GPRMC sentence.
+    //if the data is not valid we'll just return.  Invalid data is a good indicator that 
+    //the GPS has not locked onto the satellites.
+    if(!bitRead(statusReg,1)){
+      Serial.println("No satellite signal lock");
+      //delay(5000); //wait 5 seconds and check again
+      //return;  //Un REM this line if you don't want to see all the invalid data
+    }
+    //Now let's collect the data. Since most data is larger than a single byte
+    //we'll take advantage of loops to shift the data into the appropriate variables
+    Wire.beginTransmission(GPS);
+    Wire.write((uint8_t)(0x01)); //set address pointer to one
+    Wire.endTransmission();
+    delay(1); //1 millisecond delay is needed before requesting data
+    Wire.requestFrom(GPS,32); 
+    
+    for(int i = 0;i < 4;i++){  //latitude is a Long so it is 4 bytes
+      latitude <<= 8;
+      latitude |= Wire.read();
+    }
+    for(int i = 0;i < 4;i++){
+      longitude <<= 8;
+      longitude |= Wire.read();
+    }
+
+    Serial.print("LAT:");
+    Serial.println(latitude / 1000000);
+
+    Serial.print("LON:");
+    Serial.println(longitude / 1000000);
+    
   }
   delay(100);  //lastQuat = quat;
 }
@@ -82,7 +140,7 @@ void printDouble( double val, byte precision){
    unsigned long mult = 1;
    byte padding = precision -1;
    while(precision--)
- mult *=10;
+ mult *=10;    
 
    if(val >= 0)
 frac = (val - int(val)) * mult;

@@ -7,6 +7,8 @@ using System;
 
 public class BNOController : MonoBehaviour {
 
+    public int baudRate = 9600;
+
     private SerialPort controller;
     private string messageFromController;
     private bool runThread = true;
@@ -25,6 +27,9 @@ public class BNOController : MonoBehaviour {
     public float x;
     public float y;
     public float z;
+
+    public float latitude;
+    public float longitude;
 
     public int system;
     public int gyro;
@@ -76,6 +81,15 @@ public class BNOController : MonoBehaviour {
                 , float.Parse(decoded[3]));
             sensorRotation = q;
         }
+        if (message.StartsWith("LON:"))
+        {
+            longitude = float.Parse(message.Substring(4));
+        }
+        if (message.StartsWith("LAT:"))
+        {
+            latitude = float.Parse(message.Substring(4));
+        }
+
         if (message.StartsWith("S:"))
         {
             system = int.Parse(message.Substring(2));
@@ -117,6 +131,7 @@ public class BNOController : MonoBehaviour {
                 try
                 {
                     messageFromController = controller.ReadLine();
+                    Debug.Log(messageFromController);
                     ProcessMessage(messageFromController);
                 }
                 catch (System.Exception) { }
@@ -152,7 +167,7 @@ public class BNOController : MonoBehaviour {
             Connected = true;
 
             // check the default port
-            controller = new SerialPort(portName, 9600);
+            controller = new SerialPort(portName, baudRate);
             controller.ReadTimeout = 100;
             controller.Open();
         }
