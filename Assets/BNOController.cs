@@ -14,7 +14,7 @@ public class BNOController : MonoBehaviour {
     private bool runThread = true;
 
     public bool Connected = false;
-    public string portName = "COM10";
+    public string portName = "";
 
     Quaternion sensorRotation;
 
@@ -71,6 +71,7 @@ public class BNOController : MonoBehaviour {
 
     void ProcessMessage(string message)
     {
+        Debug.Log(message);
         if (message.StartsWith("Q:"))
         {
             string[] decoded = message.Substring(2).Split(',');

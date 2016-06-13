@@ -114,10 +114,10 @@ void loop() {
     }
 
     Serial.print("LAT:");
-    Serial.println(latitude / 1000000);
+    printDouble((double) latitude / (double) 1000000, 5);
 
     Serial.print("LON:");
-    Serial.println(longitude / 1000000);
+    printDouble((double) longitude / (double) 1000000, 5);
     
   }
   delay(100);  //lastQuat = quat;
