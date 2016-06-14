@@ -21,7 +21,9 @@ public class BNOController : MonoBehaviour {
     public Text azimuth;
     public Text tilt;
     public Text skew;
-    
+
+    public Text lat;
+    public Text lon;
 
     [Range(0, 360)]
     public float x;
@@ -66,6 +68,9 @@ public class BNOController : MonoBehaviour {
         tilt.text = "Tilt: "
             + Math.Round(Map(z, -90.0f, 0.0f, 0.0f, 90.0f), 2);
         skew.text = "Skew: " + Math.Round(y, 2);
+        lat.text = "Lat: " + Math.Round(latitude, 2);
+        lon.text = "Long: " + Math.Round(longitude, 2);
+
     }
 
 
