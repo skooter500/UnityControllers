@@ -76,7 +76,7 @@ void loop() {
     Serial.print(F("OZ:"));
     Serial.println((float)event.orientation.z);    
 
-     Wire.beginTransmission(GPS);
+    Wire.beginTransmission(GPS);
     Wire.write((uint8_t)(0x00)); //set address pointer to zero
     Wire.endTransmission();
     delay(1); //1 millisecond delay is needed before requesting data
