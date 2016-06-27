@@ -59,18 +59,26 @@ public class BNOController : MonoBehaviour {
 
     }
 
+    bool mapLoaded = false;
+
     // Update is called once per frame
     void Update()
     {
         transform.rotation = sensorRotation;
 
-        azimuth.text = "Azimuth: " + Math.Round(x, 2);
+        azimuth.text = "Azimuth: " + Math.Round(x, 4);
         tilt.text = "Tilt: "
-            + Math.Round(Map(z, -90.0f, 0.0f, 0.0f, 90.0f), 2);
-        skew.text = "Skew: " + Math.Round(y, 2);
-        lat.text = "Lat: " + Math.Round(latitude, 2);
-        lon.text = "Long: " + Math.Round(longitude, 2);
+            + Math.Round(Map(z, -90.0f, 0.0f, 0.0f, 90.0f), 4);
+        skew.text = "Skew: " + Math.Round(y, 4);
+        lat.text = "Lat: " + Math.Round(latitude, 4);
+        lon.text = "Long: " + Math.Round(longitude, 4);
 
+        if (latitude != 0.0f && longitude != 0.0f && !mapLoaded)
+        {
+            MapLoader ml = FindObjectOfType<MapLoader>();
+            ml.LoadMapAsync();
+            mapLoaded = true;
+        }        
     }
 
 
@@ -123,9 +131,7 @@ public class BNOController : MonoBehaviour {
         if (message.StartsWith("OZ:"))
         {
             z = float.Parse(message.Substring(3));
-        }
-
-
+        }        
     }
 
     void ThreadWorker()

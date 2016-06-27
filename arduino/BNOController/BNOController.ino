@@ -113,12 +113,23 @@ void loop() {
       longitude |= Wire.read();
     }
 
+   long httpLat = latitude/1000000;
+   long httpLon = longitude/1000000;
+   latitude = latitude - (httpLat*1000000);
+   longitude = longitude - (httpLon*1000000);
+   Serial.print("LAT:");
+   Serial.print(httpLat);Serial.print("+");Serial.print(latitude/10000.0,4);Serial.println();
+   Serial.print("LON:");
+   Serial.print(httpLon);Serial.print("+");Serial.print(abs(longitude/10000.0),4);
+   Serial.println();
+  /*
     Serial.print("LAT:");
     printDouble((double) latitude / (double) 1000000, 5);
     Serial.println();
     Serial.print("LON:");
     printDouble((double) longitude / (double) 1000000, 5);
     Serial.println();
+    */
   }
   delay(10);  //lastQuat = quat;
 }
