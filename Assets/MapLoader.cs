@@ -14,8 +14,8 @@ public class MapLoader : MonoBehaviour {
 
         BNOController bno = FindObjectOfType<BNOController>();
 
-        float lat = bno.latitude;
-        float lon = bno.longitude;
+        string lat = bno.latitude;
+        string lon = bno.longitude;
         string url = "http://maps.google.com/maps/api/staticmap?center=" + lat + "," + lon + "&zoom=14&size=300x300&type=hybrid&sensor=true";
         WWW www;
         www = new WWW(url);

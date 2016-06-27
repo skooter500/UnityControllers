@@ -30,8 +30,8 @@ public class BNOController : MonoBehaviour {
     public float y;
     public float z;
 
-    public float latitude;
-    public float longitude;
+    public string latitude;
+    public string longitude;
 
     public int system;
     public int gyro;
@@ -70,15 +70,16 @@ public class BNOController : MonoBehaviour {
         tilt.text = "Tilt: "
             + Math.Round(Map(z, -90.0f, 0.0f, 0.0f, 90.0f), 4);
         skew.text = "Skew: " + Math.Round(y, 4);
-        lat.text = "Lat: " + Math.Round(latitude, 4);
-        lon.text = "Long: " + Math.Round(longitude, 4);
+        lat.text = "Lat: " + latitude;
+        lon.text = "Long: " + longitude;
 
+        /*
         if (latitude != 0.0f && longitude != 0.0f && !mapLoaded)
         {
             MapLoader ml = FindObjectOfType<MapLoader>();
             ml.LoadMapAsync();
             mapLoaded = true;
-        }        
+        } */            
     }
 
 
@@ -97,11 +98,11 @@ public class BNOController : MonoBehaviour {
         }
         if (message.StartsWith("LON:"))
         {
-            longitude = float.Parse(message.Substring(4));
+            longitude = message.Substring(4);
         }
         if (message.StartsWith("LAT:"))
         {
-            latitude = float.Parse(message.Substring(4));
+            latitude = message.Substring(4);
         }
 
         if (message.StartsWith("S:"))
