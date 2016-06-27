@@ -73,13 +73,13 @@ public class BNOController : MonoBehaviour {
         lat.text = "Lat: " + latitude;
         lon.text = "Long: " + longitude;
 
-        /*
-        if (latitude != 0.0f && longitude != 0.0f && !mapLoaded)
+        
+        if (!mapLoaded)
         {
             MapLoader ml = FindObjectOfType<MapLoader>();
             ml.LoadMapAsync();
             mapLoaded = true;
-        } */            
+        }             
     }
 
 
