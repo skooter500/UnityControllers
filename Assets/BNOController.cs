@@ -74,7 +74,7 @@ public class BNOController : MonoBehaviour {
         lon.text = "Long: " + longitude;
 
         
-        if (latitude != "" && longitude != "" && !mapLoaded)
+        if (latitude != "" && longitude != "" && ! latitude.Contains("00") && !mapLoaded)
         {
             MapLoader ml = FindObjectOfType<MapLoader>();
             ml.LoadMapAsync();
