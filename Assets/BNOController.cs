@@ -74,12 +74,17 @@ public class BNOController : MonoBehaviour {
         lon.text = "Long: " + longitude;
 
         
-        if (latitude != "" && longitude != "" && ! latitude.Contains("00") && !mapLoaded)
+        if (latitude != "" && longitude != "" && ! latitude.Contains("00")  && !longitude.Contains("00") && !mapLoaded)
         {
             MapLoader ml = FindObjectOfType<MapLoader>();
             ml.LoadMapAsync();
             mapLoaded = true;
-        }             
+        }
+
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            Application.Quit();
+        } 
     }
 
 
@@ -132,7 +137,7 @@ public class BNOController : MonoBehaviour {
         {
             z = float.Parse(message.Substring(3));
         }
-
+        
     }
 
     void ThreadWorker()

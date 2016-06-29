@@ -12,7 +12,7 @@ public class MapLoader : MonoBehaviour {
 
         BNOController bno = FindObjectOfType<BNOController>();
                 string url = "https://maps.google.com/maps?q=" + bno.latitude + "," + bno.longitude
-            + "(DN_13206)&iwloc=A&hl=en&output=embed&" + param;
+            + "(DN_13206)&iwloc=A&hl=en&output=embed";
 
         //browser.Url = url;
         //string html = "<html><body>Hello</body></html>";
