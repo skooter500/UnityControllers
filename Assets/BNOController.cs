@@ -74,7 +74,7 @@ public class BNOController : MonoBehaviour {
         lon.text = "Long: " + longitude;
 
         
-        if (!mapLoaded)
+        if (latitude != "" && longitude != "" && !mapLoaded)
         {
             MapLoader ml = FindObjectOfType<MapLoader>();
             ml.LoadMapAsync();
@@ -85,7 +85,6 @@ public class BNOController : MonoBehaviour {
 
     void ProcessMessage(string message)
     {
-        Debug.Log(message);
         if (message.StartsWith("Q:"))
         {
             string[] decoded = message.Substring(2).Split(',');
@@ -132,7 +131,8 @@ public class BNOController : MonoBehaviour {
         if (message.StartsWith("OZ:"))
         {
             z = float.Parse(message.Substring(3));
-        }        
+        }
+
     }
 
     void ThreadWorker()
@@ -144,7 +144,7 @@ public class BNOController : MonoBehaviour {
                 try
                 {
                     messageFromController = controller.ReadLine();
-                    Debug.Log(messageFromController);
+                    //Debug.Log(messageFromController);
                     ProcessMessage(messageFromController);
                 }
                 catch (System.Exception) { }
