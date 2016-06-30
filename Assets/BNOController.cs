@@ -77,7 +77,7 @@ public class BNOController : MonoBehaviour {
         if (latitude != "" && longitude != "" && ! latitude.Contains("00")  && !longitude.Contains("00") && !mapLoaded)
         {
             MapLoader ml = FindObjectOfType<MapLoader>();
-            ml.LoadMapAsync();
+            ml.LoadMap();
             mapLoaded = true;
         }
 
@@ -164,7 +164,10 @@ public class BNOController : MonoBehaviour {
 
     void OnApplicationQuit()
     {
-        controller.Close();
+        if (controller != null)
+        {
+            controller.Close();
+        }
         runThread = false;
     }
 
