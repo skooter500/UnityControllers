@@ -25,6 +25,8 @@ public class BNOController : MonoBehaviour {
     public Text lat;
     public Text lon;
 
+    public Text calib;
+
     [Range(0, 360)]
     public float x;
     public float y;
@@ -72,6 +74,8 @@ public class BNOController : MonoBehaviour {
         skew.text = "Skew: " + Math.Round(y, 4);
         lat.text = "Lat: " + latitude;
         lon.text = "Long: " + longitude;
+
+        calib.text = "M: " + magnet + " " + "S: " + system;
 
         
         if (latitude != "" && longitude != "" && ! latitude.Contains("00")  && !longitude.Contains("00") && !mapLoaded)
