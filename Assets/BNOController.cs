@@ -25,6 +25,10 @@ public class BNOController : MonoBehaviour {
     public Text lat;
     public Text lon;
 
+    public Text status;
+    public ScrollRect scrollRect;
+    public Text data;
+
     [Range(0, 360)]
     public float x;
     public float y;
@@ -46,10 +50,14 @@ public class BNOController : MonoBehaviour {
         return m1 + ((dist / range1) * range2);
     }
 
+    void Connect()
+    {
+    }
 
     // Use this for initialization
     void Start()
     {
+        Connect();
         LookForController();
 
         // create the thread
@@ -84,12 +92,27 @@ public class BNOController : MonoBehaviour {
         if (Input.GetKey(KeyCode.Escape))
         {
             Application.Quit();
-        } 
+        }
+        if (newMessage)
+        {
+            Debug.Log(messageFromController);
+            if (data.text.Length > 1000)
+            {
+                data.text = "";
+            }
+            data.text = data.text + "\n" + messageFromController;
+            Canvas.ForceUpdateCanvases();
+            scrollRect.verticalScrollbar.value = 0f;
+            Canvas.ForceUpdateCanvases();
+            newMessage = false;
+        }
     }
 
+    bool newMessage = false; 
 
     void ProcessMessage(string message)
     {
+        newMessage = true;
         if (message.StartsWith("Q:"))
         {
             string[] decoded = message.Substring(2).Split(',');
@@ -149,7 +172,6 @@ public class BNOController : MonoBehaviour {
                 try
                 {
                     messageFromController = controller.ReadLine();
-                    //Debug.Log(messageFromController);
                     ProcessMessage(messageFromController);
                 }
                 catch (System.Exception) { }
@@ -173,24 +195,36 @@ public class BNOController : MonoBehaviour {
 
     public void LookForController()
     {
-        string[] ports = SerialPort.GetPortNames();
-        Debug.Log(ports.Length);
+        if (controller != null)
+        {
+            controller.Close();
+            controller = null;
+        }
 
+        string[] ports = SerialPort.GetPortNames();        
         if (ports.Length == 0)
         {
-            Debug.Log("No controller detected");
+            status.text = "No controller detected";
         }
         else
         {
             Debug.Log("Ports: " + string.Join(", ", ports));
             portName = "\\\\.\\" + ports[ports.Length - 1];
-            Debug.Log("Port Name: " + portName);
+            status.text = "Port Name: " + portName;
             Connected = true;
 
-            // check the default port
-            controller = new SerialPort(portName, baudRate);
-            controller.ReadTimeout = 100;
-            controller.Open();
+            // Open the default port
+            try
+            {
+                controller = new SerialPort(portName, baudRate);
+                controller.ReadTimeout = 100;
+                controller.Open();
+                status.text = "Connected on port " + portName + " at " + baudRate + " baud";
+            }
+            catch (Exception e)
+            {
+                status.text = "Could not connect: " + e.Message;
+            }
         }
     }
 }
