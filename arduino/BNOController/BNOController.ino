@@ -21,10 +21,9 @@ unsigned long speedKPH  = 0;
  
 void setup() {
   Serial.begin(9600);  
-  /* Initialise the sensor */
+  
   if(!bno.begin(Adafruit_BNO055::OPERATION_MODE_COMPASS))
   {
-    /* There was a problem detecting the BNO055 ... check your connections */
     Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
     while(1);
   }
@@ -33,108 +32,94 @@ void setup() {
     
   bno.setExtCrystalUse(true); 
 }
-
+int i = 0;
 void loop() {
-
   imu::Quaternion quat = bno.getQuat();
-  /*if (quat.x() != lastQuat.x() 
-    || quat.y() != lastQuat.y()
-    || quat.z() != lastQuat.z()
-    || quat.w() != lastQuat.w()
-    )
-    */
-  {
-    Serial.print("Q:");
-    printDouble(quat.x(), 5);
-    Serial.print(",");
-    printDouble(quat.y(), 5);
-    Serial.print(",");
-    printDouble(quat.z(), 5);
-    Serial.print(",");
-    printDouble(quat.w(), 5);    
-    Serial.println();
+  
+  Serial.print(F("Q:"));
+  printDouble(quat.x(), 5);
+  Serial.print(F(","));
+  printDouble(quat.y(), 5);
+  Serial.print(F(","));
+  printDouble(quat.z(), 5);
+  Serial.print(F(","));
+  printDouble(quat.w(), 5);    
+  Serial.println();
 
-    uint8_t system, gyro, accel, mag;
-    system = gyro = accel = mag = 0;
-    bno.getCalibration(&system, &gyro, &accel, &mag);
-    Serial.print("S:");
-    Serial.println(system, DEC);
-    Serial.print("G:");
-    Serial.println(gyro, DEC);
-    Serial.print("A:");
-    Serial.println(accel, DEC);
-    Serial.print("M:");
-    Serial.println(mag, DEC);
+  uint8_t system, gyro, accel, mag;
+  system = gyro = accel = mag = 0;
+  bno.getCalibration(&system, &gyro, &accel, &mag);
+  Serial.print(F("S:"));
+  Serial.println(system, DEC);
+  Serial.print(F("G:"));
+  Serial.println(gyro, DEC);
+  Serial.print(F("A:"));
+  Serial.println(accel, DEC);
+  Serial.print(F("M:"));
+  Serial.println(mag, DEC);
 
-    sensors_event_t event;
-    bno.getEvent(&event);
+  sensors_event_t event;
+  bno.getEvent(&event);
 
-    Serial.print(F("OX:"));
-    Serial.println((float)event.orientation.x);
-    Serial.print(F("OY:"));
-    Serial.println((float)event.orientation.y);
-    Serial.print(F("OZ:"));
-    Serial.println((float)event.orientation.z);    
-
-     Wire.beginTransmission(GPS);
-    Wire.write((uint8_t)(0x00)); //set address pointer to zero
-    Wire.endTransmission();
-    delay(1); //1 millisecond delay is needed before requesting data
-    Wire.requestFrom(GPS,1); //all data (not including checksum failures) is a total of 31 bytes
-    statusReg = Wire.read();
-    //lets check bit zero of the status register to see if any new data is available
-    //if not we'll just return.  If bit zero is a 1 then new data is available
-    //if(!bitRead(statusReg,0)){
-    //  return;
-    //}
-    //let's check bit one of the status register to see if the latitude and
-    //longitude data computed is valid or not.  This bit is controlled by the GPRMC sentence.
-    //if the data is not valid we'll just return.  Invalid data is a good indicator that 
-    //the GPS has not locked onto the satellites.
-    if(!bitRead(statusReg,1)){
-      Serial.println("No satellite signal lock");
-      //delay(5000); //wait 5 seconds and check again
-      //return;  //Un REM this line if you don't want to see all the invalid data
-    }
-    //Now let's collect the data. Since most data is larger than a single byte
-    //we'll take advantage of loops to shift the data into the appropriate variables
-    Wire.beginTransmission(GPS);
-    Wire.write((uint8_t)(0x01)); //set address pointer to one
-    Wire.endTransmission();
-    delay(1); //1 millisecond delay is needed before requesting data
-    Wire.requestFrom(GPS,32); 
-    
-    for(int i = 0;i < 4;i++){  //latitude is a Long so it is 4 bytes
-      latitude <<= 8;
-      latitude |= Wire.read();
-    }
-    for(int i = 0;i < 4;i++){
-      longitude <<= 8;
-      longitude |= Wire.read();
-    }
-
-   long httpLat = latitude/1000000;
-   long httpLon = longitude/1000000;
-   latitude = latitude - (httpLat*1000000);
-   longitude = longitude - (httpLon*1000000);
-   Serial.print("LAT:");
-   Serial.print(httpLat);Serial.print("+");Serial.print(latitude/10000.0,4);Serial.println();
-   Serial.print("LON:");
-   Serial.print(httpLon);Serial.print("+");Serial.print(abs(longitude/10000.0),4);
-   Serial.println();
-  /*
-    Serial.print("LAT:");
-    printDouble((double) latitude / (double) 1000000, 5);
-    Serial.println();
-    Serial.print("LON:");
-    printDouble((double) longitude / (double) 1000000, 5);
-    Serial.println();
-    */
+  Serial.print(F("OX:"));
+  Serial.println((float)event.orientation.x);
+  Serial.print(F("OY:"));
+  Serial.println((float)event.orientation.y);
+  Serial.print(F("OZ:"));
+  Serial.println((float)event.orientation.z);    
+  Wire.beginTransmission(GPS);
+  Wire.write((uint8_t)(0x00)); //set address pointer to zero
+  Wire.endTransmission();
+  delay(1); //1 millisecond delay is needed before requesting data
+  Wire.requestFrom(GPS,1); //all data (not including checksum failures) is a total of 31 bytes
+  statusReg = Wire.read();
+  //lets check bit zero of the status register to see if any new data is available
+  //if not we'll just return.  If bit zero is a 1 then new data is available
+  //if(!bitRead(statusReg,0)){
+  //  return;
+  //}
+  //let's check bit one of the status register to see if the latitude and
+  //longitude data computed is valid or not.  This bit is controlled by the GPRMC sentence.
+  //if the data is not valid we'll just return.  Invalid data is a good indicator that 
+  //the GPS has not locked onto the satellites.
+  if(!bitRead(statusReg,1)){
+    Serial.println(F("No satellite signal lock"));
+    //delay(5000); //wait 5 seconds and check again
+    //return;  //Un REM this line if you don't want to see all the invalid data
   }
-  delay(10);  //lastQuat = quat;
+  //Now let's collect the data. Since most data is larger than a single byte
+  //we'll take advantage of loops to shift the data into the appropriate variables
+  Wire.beginTransmission(GPS);
+  Wire.write((uint8_t)(0x01)); //set address pointer to one
+  Wire.endTransmission();
+  delay(1); //1 millisecond delay is needed before requesting data
+  Wire.requestFrom(GPS,32); 
+  
+  for(int i = 0;i < 4;i++){  //latitude is a Long so it is 4 bytes
+    latitude <<= 8;
+    latitude |= Wire.read();
+  }
+  for(int i = 0;i < 4;i++){
+    longitude <<= 8;
+    longitude |= Wire.read();
+  }
+
+ long httpLat = latitude/1000000;
+ long httpLon = longitude/1000000;
+ latitude = latitude - (httpLat*1000000);
+ longitude = longitude - (httpLon*1000000);
+ Serial.print(F("LAT:"));
+ Serial.print(httpLat);Serial.print(F("+"));Serial.print(latitude/10000.0,4);Serial.println();
+ Serial.print(F("LON:"));
+ Serial.print(httpLon);Serial.print(F("+"));Serial.print(abs(longitude/10000.0),4);
+ Serial.println();
+  delay(100); 
 }
 
+
 void printDouble( double val, byte precision){
+  Serial.print((float) val);
+ /*
  // prints val with number of decimal places determine by precision
  // precision is a number from 0 to 6 indicating the desired decimial places
  // example: lcdPrintDouble( 3.1415, 2); // prints 3.14 (two decimal places)
@@ -164,5 +149,6 @@ padding--;
 Serial.print("0");
    Serial.print(frac,DEC) ;
  }
+ */
 }
 

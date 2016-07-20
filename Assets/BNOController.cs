@@ -7,6 +7,7 @@ using System;
 
 public class BNOController : MonoBehaviour {
 
+    String stream;
     public int baudRate = 9600;
 
     private SerialPort controller;
@@ -98,12 +99,7 @@ public class BNOController : MonoBehaviour {
         }
         if (newMessage)
         {
-            Debug.Log(messageFromController);
-            if (data.text.Length > 1000)
-            {
-                data.text = "";
-            }
-            data.text = data.text + "\n" + messageFromController;
+            data.text = stream;
             Canvas.ForceUpdateCanvases();
             scrollRect.verticalScrollbar.value = 0f;
             Canvas.ForceUpdateCanvases();
@@ -116,6 +112,12 @@ public class BNOController : MonoBehaviour {
     void ProcessMessage(string message)
     {
         newMessage = true;
+        stream += "\n" + message;
+        if (stream.Length > 2000)
+        {
+            stream = "";
+        }
+        Debug.Log(messageFromController);
         if (message.StartsWith("Q:"))
         {
             string[] decoded = message.Substring(2).Split(',');
@@ -181,7 +183,7 @@ public class BNOController : MonoBehaviour {
             }
             else
             {
-                Thread.Sleep(50);
+                //Thread.Sleep(50);
             }
         }
     }
