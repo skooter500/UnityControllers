@@ -28,6 +28,7 @@ public class BNOController : MonoBehaviour {
     public Text status;
     public ScrollRect scrollRect;
     public Text data;
+    public Text calib;
 
     [Range(0, 360)]
     public float x;
@@ -80,6 +81,8 @@ public class BNOController : MonoBehaviour {
         skew.text = "Skew: " + Math.Round(y, 4);
         lat.text = "Lat: " + latitude;
         lon.text = "Long: " + longitude;
+
+        calib.text = "M: " + magnet + " " + "S: " + system;
 
         
         if (latitude != "" && longitude != "" && ! latitude.Contains("00")  && !longitude.Contains("00") && !mapLoaded)
@@ -219,7 +222,7 @@ public class BNOController : MonoBehaviour {
                 controller = new SerialPort(portName, baudRate);
                 controller.ReadTimeout = 100;
                 controller.Open();
-                status.text = "Connected on port " + portName + " at " + baudRate + " baud";
+                status.text = "Connected on port " + ports[ports.Length - 1] + " at " + baudRate + " baud";
             }
             catch (Exception e)
             {

@@ -26,8 +26,8 @@ public class MapLoader : MonoBehaviour {
     {
         Browser browser = GetComponent<Browser>();
 
-        string lat = "53+20 40.55";
-        string lon = "-6+16 2.05";
+        string lat = "53+20 44.3";
+        string lon = "-6+17 47.0";
         
         BNOController bno = FindObjectOfType<BNOController>();
         string url = "https://maps.google.com/maps?q=" + lat + "," + lon
